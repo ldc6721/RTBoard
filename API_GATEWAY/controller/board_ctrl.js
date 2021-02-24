@@ -43,6 +43,21 @@ module.exports = {
       res.status(500).send("post error");
     }
   },
+  connect_socket: async(req,res,next)=>{
+    try {
+      axios({
+        method:req.method,
+        url:baseurl+req._parsedUrl.path,
+        data:req.body,
+        headers:req.headers
+      }).then(response=>{
+        res.send(response.data);
+      });
+    } catch (e) {
+      console.error('socket.io error',e);
+      res.status(500).send("socket.io error");
+    }
+  },
   // main_page: async(req,res,next)=>{
   //   try {
   //     axios(setConfig(req.method,baseurl+req.path,req.body,req.headers,req.session))
@@ -96,18 +111,6 @@ module.exports = {
   // modify_page:async(req,res,next)=>{
   //
   // },
-  board_create:async(req,res,next)=>{
-
-  },
-  write_post: (req,res,next)=>{
-
-  },
-  modify_post: (req,res,next)=>{
-
-  },
-  delete_post: (req,res,next)=>{
-
-  },
 
   //404 handling
   no_page: (req,res,next)=>{

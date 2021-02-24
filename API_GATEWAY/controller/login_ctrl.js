@@ -13,7 +13,7 @@ module.exports= {
          }
          else {
            res.status(response.status).send(response.data);
-         }        
+         }
       });
     } catch (e) {
       console.error(e);

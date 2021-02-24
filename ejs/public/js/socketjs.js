@@ -43,80 +43,81 @@ var update_comment_count = ()=>{
   $('#cmt-count-text').html($('#cmt_list li').length + ' 개');
 };
 
-//comment websocket
-const socket = io.connect('http://'+$(location).attr('host'), {
-  path: '/socket.io',
-});
-var post_index = $(location).attr('pathname').split("/");
-
-socket.on('cmt/'+post_index[2] + '/' + post_index[3] + '/write', (data) => {
-  //new comment coming!
-  console.log(data);
-  //set new comment
-  new_cmt(data.cmt_id,data.mine, data.nickname, data.comment, data.date);
-  //comment animation
-  var autoheight = $("#cmt_id_" + data.cmt_id).children(".comment-inputtextBlock").height();
-  $("#cmt_id_" + data.cmt_id).children(".comment-inputtextBlock").css({
-    height: 1
-  });
-  $("#cmt_id_" + data.cmt_id).children(".comment-inputtextBlock").animate({
-    height: autoheight
-  }, 500);
-});
-
-socket.on('cmt/'+post_index[2]+'/'+post_index[3]+'/typing', (data) => {
-  //someone is typing comment contents or delete comment contents!
-  let nickname = data.id;
-  if(data.typing){
-    //someone is typing
-    var $input = document.createElement('li');
-    $input.innerHTML =
-    `<div id="${nickname}"class="comment-block">
-      <div class="comment-nicknameBlock">
-        <div class="comment-nicknameBox">
-          <p>${nickname}</p>
-        </div>
-      </div>
-      <div class="comment-inputtextBlock">
-        <div class="comment-inputtextBox">
-          <hgroup class="speech-bubble" role="textbox" maxlength="999" spellcheck="false">
-            <p>. . .</p>
-          </hgroup>
-        </div>
-      </div>
-    </div>`;
-    $("#cmt_list").append($input);
-
-    //animation
-    var autoheight = $('#'+nickname).children(".comment-inputtextBlock").height();
-    $('#'+nickname).children(".comment-inputtextBlock").css({
-      height:1
-    });
-    $('#'+nickname).children(".comment-inputtextBlock").animate({
-      height:autoheight
-    },500);
-  }
-  else {
-    //someone delete contents
-    $('#'+nickname).parent().remove();
-  }
-});
-
-socket.on('cmt/'+post_index[2] +'/'+post_index[3]+'/delete', (data)=>{
-    //delete existing comment!
-    $('#'+data.cmt_index).parent().remove();
-    update_comment_count();
-});
-
-//socket.io error
-socket.on("error", (data) => {
-  //comment write error!
-  if (data === "cmt err!") {
-    alert("comment error!");
-    location.reload();
-  }
-});
 $(document).ready(() => {
+  //comment websocket
+  const socket = io.connect('http://' + $('#socket_url').attr('url'), {
+    path: '/socket.io',
+  });
+  var post_index = $(location).attr('pathname').split("/");
+
+  socket.on('cmt/'+post_index[2] + '/' + post_index[3] + '/write', (data) => {
+    //new comment coming!
+    console.log(data);
+    //set new comment
+    new_cmt(data.cmt_id,data.mine, data.nickname, data.comment, data.date);
+    //comment animation
+    var autoheight = $("#cmt_id_" + data.cmt_id).children(".comment-inputtextBlock").height();
+    $("#cmt_id_" + data.cmt_id).children(".comment-inputtextBlock").css({
+      height: 1
+    });
+    $("#cmt_id_" + data.cmt_id).children(".comment-inputtextBlock").animate({
+      height: autoheight
+    }, 500);
+  });
+
+  socket.on('cmt/'+post_index[2]+'/'+post_index[3]+'/typing', (data) => {
+    //someone is typing comment contents or delete comment contents!
+    let nickname = data.id;
+    if(data.typing){
+      //someone is typing
+      var $input = document.createElement('li');
+      $input.innerHTML =
+      `<div id="${nickname}"class="comment-block">
+        <div class="comment-nicknameBlock">
+          <div class="comment-nicknameBox">
+            <p>${nickname}</p>
+          </div>
+        </div>
+        <div class="comment-inputtextBlock">
+          <div class="comment-inputtextBox">
+            <hgroup class="speech-bubble" role="textbox" maxlength="999" spellcheck="false">
+              <p>. . .</p>
+            </hgroup>
+          </div>
+        </div>
+      </div>`;
+      $("#cmt_list").append($input);
+
+      //animation
+      var autoheight = $('#'+nickname).children(".comment-inputtextBlock").height();
+      $('#'+nickname).children(".comment-inputtextBlock").css({
+        height:1
+      });
+      $('#'+nickname).children(".comment-inputtextBlock").animate({
+        height:autoheight
+      },500);
+    }
+    else {
+      //someone delete contents
+      $('#'+nickname).parent().remove();
+    }
+  });
+
+  socket.on('cmt/'+post_index[2] +'/'+post_index[3]+'/delete', (data)=>{
+      //delete existing comment!
+      $('#'+data.cmt_index).parent().remove();
+      update_comment_count();
+  });
+
+  //socket.io error
+  socket.on("error", (data) => {
+    //comment write error!
+    if (data === "cmt err!") {
+      alert("comment error!");
+      location.reload();
+    }
+  });
+
   //send comment
   $("#cmt-input-postButton").click(() => {
     var cmt_text = $("#cmt-input-text").val();
@@ -146,7 +147,6 @@ $(document).ready(() => {
       //nothing happend;
     }
   });
-
 
   //comment typing effect
   var cmt_input_text_emptycheck = true;
