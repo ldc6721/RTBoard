@@ -2,12 +2,17 @@ const express = require('express');
 const router = express.Router();
 const controller = require('./ctrl');
 
-
 router.use('/',(req,res,next)=>{
-  //parse session header
-  req.headers.session = JSON.parse(req.headers.session);
-  next();
-})
+  if(req.headers.session){
+    //parse session header
+    req.headers.session = JSON.parse(req.headers.session);
+    next();
+  }
+  else {
+    res.status(500).send("error");
+  }
+});
+
 router.route('/')
   .get(controller.main_page); //'/home'   home
 

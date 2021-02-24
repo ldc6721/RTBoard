@@ -160,7 +160,7 @@ module.exports = {
           login_data:req.headers.session.login,
           board_title: req.params.boardname,
           read_post: read_post,
-          socketurl: req.headers.host,
+          socketurl: basic_data.socket_url,
         })
       }
       else {

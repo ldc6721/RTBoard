@@ -7,11 +7,14 @@ require('date-utils');
 const ejs = require('ejs');
 const router = require('./routes/router');
 const bodyParser = require('body-parser');
-//cross origin resource sharing
-app.use(cors());
 
-//set socket
-const webSocket = require('./socket/socket');
+var corsOptions = {
+  origin: 'http://127.0.0.1:8080',
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+};
+
+//cross origin resource sharing
+app.use(cors(corsOptions));
 
 //set ejs
 app.set('view engine','ejs');
@@ -24,15 +27,8 @@ app.use(bodyParser.urlencoded({
   extended:true
 }));
 
-app.use('/socket.io',(req,res,next)=>{
-  console.log("test");
-  next();
-});
-
 app.use('/',router);
 
-const server = app.listen(port,()=>{
+app.listen(port,()=>{
   console.log(`board service is listening now port at ${port}`);
 });
-
-webSocket(server);

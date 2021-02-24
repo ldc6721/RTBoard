@@ -6,6 +6,13 @@ const bodyParser = require('body-parser');
 const router = require('./routes/router');
 const port = 8084;
 
+
+var corsOptions = {
+  origin: 'http://127.0.0.1:8080',
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+};
+
+app.use(cors(corsOptions));
 //set ejs
 app.set('view engine','ejs');
 app.set('views',path.join(__dirname,'../ejs/views'));
