@@ -143,7 +143,7 @@ module.exports = {
       //query to db
       await conn.beginTransaction();  //transaction start
       await conn.query(`update ${board_name}
-        set viewcnt=${view_cnt},goodcnt=${good_cnt}
+        set viewcnt= viewcnt + ${view_cnt},goodcnt=goodcnt + ${good_cnt}
         where post_index = ${index}`);
       await conn.commit();  //transaction end
       conn.release();
@@ -161,11 +161,29 @@ module.exports = {
       await conn.beginTransaction();  //transaction start
       await conn.query(`insert into board_data
         (board_name)
-        values('${board_name}')`,(err,response)=>{
-          if(err) {
-            console.error("board create fail",err);
-          }
-        });
+        values('${board_name}')`);
+        //create new board table
+        await conn.query(`CREATE TABLE IF NOT EXISTS board (
+          post_index INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+          title varchar(255) NOT NULL,
+          contents varchar(2048) NOT NULL,
+          author varchar(255) NOT NULL,
+          uid int NOT NULL,
+          date datetime NOT NULL,
+          viewcnt int default 0,
+          goodcnt int default 0,
+          deleted boolean default false
+        )`);
+        //create new comment table
+        await conn.query(`CREATE TABLE IF NOT EXISTS board_comment (
+          post_index int NOT NULL,
+          nickname varchar(255) NOT NULL,
+          uid int NOT NULL,
+          comment varchar(255) NOT NULL,
+          date datetime NOT NULL,
+          deleted boolean default false,
+          FOREIGN KEY (post_index) REFERENCES board(post_index)
+        )`);
       await conn.commit();    //transaction end
       conn.release();
       return;
@@ -180,38 +198,11 @@ module.exports = {
     let conn = await pool.getConnection();
     try {
       //query to db
-
       await conn.beginTransaction();  //transaction start
       //set board data
       await conn.query(`insert into ${board_name}
         (title,contents,author,uid,date)
-        values('${title}','${contents}','${author}','${uid}','${date}')`,(err)=>{
-          if(err) {
-            console.error("create fail",err);
-          }
-        });
-      //create new board table
-      await conn.query(`CREATE TABLE IF NOT EXISTS board (
-        post_index INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-        title varchar(255) NOT NULL,
-        contents varchar(2048) NOT NULL,
-        author varchar(255) NOT NULL,
-        uid int NOT NULL,
-        date datetime NOT NULL,
-        viewcnt int default 0,
-        goodcnt int default 0,
-        deleted boolean default false
-      )`);
-      //create new comment table
-      await conn.query(`CREATE TABLE IF NOT EXISTS board_comment (
-        post_index int NOT NULL,
-        nickname varchar(255) NOT NULL,
-        uid int NOT NULL,
-        comment varchar(255) NOT NULL,
-        date datetime NOT NULL,
-        deleted boolean default false,
-        FOREIGN KEY (post_index) REFERENCES board(post_index)
-      )`);
+        values('${title}','${contents}','${author}','${uid}','${time}')`);
       await conn.commit();    //transaction end
       conn.release();
     } catch (e) {
@@ -242,7 +233,6 @@ module.exports = {
     let conn = await pool.getConnection();
     try {
       //query to db
-
       await conn.beginTransaction();  //transaction start
       await conn.query(`insert into ${board_name}.comment
         (nickname,post_index,uid,comment,date)
@@ -264,7 +254,6 @@ module.exports = {
     let conn = await pool.getConnection();
     try {
       //query to db
-
       await conn.beginTransaction();  //start transaction
       await conn.query(`UPDATE ${board_name}
         set deleted = true

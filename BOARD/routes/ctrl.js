@@ -160,6 +160,7 @@ module.exports = {
           login_data:req.headers.session.login,
           board_title: req.params.boardname,
           read_post: read_post,
+          socketurl: basic_data.socket_url,
         })
       }
       else {
@@ -227,6 +228,29 @@ module.exports = {
       console.log("error : ", e);
       res.json("error!");
     };
+  },
+  check_writer_post:async (req,res,next)=>{
+    try {
+      if(req.headers.session.login.admin) {
+        //admin user
+        next();
+      }
+      else{
+        //read_db control
+        let result = await read_db.get_post_one(req.params.boardname,req.params.index);
+        if(result.uid === req.headers.session.login.uid){
+          //user authentication enabled
+          next();
+        }
+        else {
+          //user authentication disabled
+          res.json("alert: user id is difference");
+        }
+      }
+    } catch (e) {
+      console.error(e);
+      res.json("alert: 사용자 인증 실패");
+    }
   },
   modify_post: (req,res,next) => {
     try {

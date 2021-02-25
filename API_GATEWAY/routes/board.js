@@ -2,7 +2,7 @@ const express =require('express');
 const router = express.Router();
 const controller = require('../controller/board_ctrl');
 
-
+//router.use('/socket.io',controller.connect_socket);
 router.route('/')
       .get(controller.get_page);
 
