@@ -16,6 +16,7 @@ var corsOptions = {
 //cross origin resource sharing
 app.use(cors(corsOptions));
 
+
 //set ejs
 app.set('view engine','ejs');
 app.set('views',path.join(__dirname,'../ejs/views'));
