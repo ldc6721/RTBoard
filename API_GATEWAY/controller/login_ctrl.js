@@ -5,7 +5,7 @@ const setConfig = require('./axios_option');
 module.exports= {
   login_page: (req,res,next)=>{
     try {
-      axios(setConfig(req.method,baseurl + req.path,req.body,req.headers,req.session))
+      axios(setConfig(req.method,baseurl + req.path,req.body,req.headers,req.session,req.sessionID))
       .then(response=>{
          if(response.headers.redirect) {
            //redirect
@@ -22,23 +22,14 @@ module.exports= {
   },
   login_request: (req,res,next) => {
     try {
-      axios(setConfig(req.method,baseurl + req.path,req.body,req.headers,req.session))
+      axios(setConfig(req.method,baseurl + req.path,req.body,req.headers,req.session,req.sessionID))
       .then(response=>{
-        if(response.data === "id not found"){
-          //id not found
-          res.status(response.status).json(response.data);
-        }
-        else if(response.data === "fail!"){
-          //fail!
-          res.status(response.status).json(response.data);
-        }
-        else {
-          //success
-          req.session.login = {
-            id:response.data.id,
-            uid:response.data.uid
-          };
+        if(response.data === "success") {
           res.status(response.status).json("success!");
+        }
+        else{
+          //id not found,password incorrect,fail
+          res.status(response.status).json(response.data);
         }
       });
     } catch (e) {
@@ -64,7 +55,7 @@ module.exports= {
   },
   login_create: (req,res,next)=> {
     try {
-      axios(setConfig(req.method,baseurl + req.path,req.body,req.headers,req.session))
+      axios(setConfig(req.method,baseurl + req.path,req.body,req.headers,req.session,req.sessionID))
       .then(response=>{
         res.status(response.status).json(response.data);
       })

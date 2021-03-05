@@ -25,4 +25,6 @@ router.route('/board/:boardname/:index')
 router.route('/board/:boardname/modify/:index')
       .get(controller.check_login,controller.get_page); // '/modify' modified post
 
+//upload_image
+router.post('/board/:boardname/write/temporary_image',controller.upload_image_module);
 module.exports = router;

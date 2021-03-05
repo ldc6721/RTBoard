@@ -79,6 +79,7 @@ module.exports = {
         b.date as date,
         b.viewcnt as viewcnt,
         b.goodcnt as goodcnt,
+        c.comment_index as comment_index,
         c.nickname as cmnickname,
         c.uid as cmuid,
         c.comment as cmcomment,
@@ -98,6 +99,7 @@ module.exports = {
             continue;
           }
           cmt.push({
+            index:element.comment_index,
             nickname:element.cmnickname,
             uid:element.cmuid,
             comment:element.cmcomment,
@@ -163,7 +165,7 @@ module.exports = {
         (board_name)
         values('${board_name}')`);
         //create new board table
-        await conn.query(`CREATE TABLE IF NOT EXISTS board (
+      await conn.query(`CREATE TABLE IF NOT EXISTS ${board_name} (
           post_index INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
           title varchar(255) NOT NULL,
           contents varchar(2048) NOT NULL,
@@ -174,15 +176,18 @@ module.exports = {
           goodcnt int default 0,
           deleted boolean default false
         )`);
+      await conn.commit();
+      await conn.beginTransaction();
         //create new comment table
-        await conn.query(`CREATE TABLE IF NOT EXISTS board_comment (
+      await conn.query(`CREATE TABLE IF NOT EXISTS ${board_name}_comment (
+          comment_index int NOT NULL AUTO_INCREMENT PRIMARY KEY,
           post_index int NOT NULL,
           nickname varchar(255) NOT NULL,
           uid int NOT NULL,
           comment varchar(255) NOT NULL,
           date datetime NOT NULL,
           deleted boolean default false,
-          FOREIGN KEY (post_index) REFERENCES board(post_index)
+          FOREIGN KEY (post_index) REFERENCES ${board_name}(post_index)
         )`);
       await conn.commit();    //transaction end
       conn.release();

@@ -467,12 +467,19 @@ strong {
   width:480px;
   padding:8px 0px;
   color:white;
-
   background:#2e3338;
+}
+.board-write-uploadimage {
+  overflow:hidden;
+  margin-top:12px;
+  padding-left:120px;
+}
+.board-write-upadimagebutton {
+  padding:8px 4px 8px 4px;
 }
 .board-write-contentsblock {
   overflow:hidden;
-  margin-top:32px;
+  margin-top:16px;
   padding-top:1px;
 }
 .board-write-contentsblock p{

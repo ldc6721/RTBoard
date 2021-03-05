@@ -4,6 +4,10 @@
     <p>제목</p>
     <input id="board-write-title" class="board-write-title" maxlength="64" value="<%=read_post.subject%>"></input>
   </div>
+  <div class="board-write-uploadimage">
+    <button class="board-write-upadimagebutton bold-text">image</button>
+    <input id="board-write-imageinput" type="file" name="image" style="display: none;" accept=".jpg,.jpeg,.png,.webp" multiple/>
+  </div>
   <div class="board-write-contentsblock">
     <p>내용</p>
     <textarea id="board-write-contents" class="board-write-contents"><%=read_post.contents%></textarea>

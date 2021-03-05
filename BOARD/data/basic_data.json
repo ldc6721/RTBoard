@@ -1,5 +1,5 @@
 {
   "nav_bar": ["board_list","nav2","nav3","nav4"],
   "host_url": "http://localhost:8080",
-  "socket_url":"http://localhost:8085"
+  "socket_url":"http://localhost:8086"
 }

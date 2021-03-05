@@ -13,7 +13,7 @@
   <% for(var i=0;i<read_post.comment.length;i++) { %>
     <% if(read_post.comment[i].deleted === true) continue;%>
   <li>
-    <div id="cmt_id_<%=i%>" class="comment-block">
+    <div id="<%=read_post.comment[i].index%>" class="comment-block">
       <div class="comment-nicknameBlock">
         <div class="comment-nicknameBox">
           <p><%=read_post.comment[i].nickname%></p>

@@ -1,4 +1,5 @@
 const read_db = require('../database/read_db');
+const redis = require('../database/redis');
 const crypto = require('crypto');
 const basic_data = require('../data/basic_data');
 
@@ -28,37 +29,27 @@ module.exports = {
         console.log("no data in DB!");
         return res.status(200).json("id not found");
       }
-      crypto.pbkdf2(req.body.ps, doc.userpsbuf , 100000, 64, 'sha512', (err,key)=>{
+      crypto.pbkdf2(req.body.ps, doc.userpsbuf , 100000, 64, 'sha512', async (err,key)=>{
         if(key.toString('hex') == doc.userps){
-          let login = {
-            id:doc.userid,
-            uid:doc.uid
-          };
           if(doc.admin) {
             console.log("관리자 로그인:",doc.userid);
-            login.admin=doc.admin;
-          };
-          // req.session.login = {
-          //   id:doc.userid,
-          //   uid:doc.uid,
-          // };
-          // if(doc.admin) {
-          //   console.log("관리자 로그인:",doc.userid);
-          //   req.session.login.admin = doc.admin;
-          // };
-          console.log("login success");
-          //res.json("success!");
-          return res.json(login);
+            console.log("login success");
+            res.json(await redis.set_login_data(req.headers.sessionid,doc.userid,doc.uid,doc.admin));
+          }
+          else {
+            console.log("login success");
+            res.json(await redis.set_login_data(req.headers.sessionid,doc.userid,doc.uid));
+          }
         }
         else {
-          console.log("login fail");
-          return res.json("fail!");
+          console.log("password incorrect");
+          res.json("password incorrect");
         }
       });
     }
     catch(e) {
       console.log(e);
-      res.status(500).json({error:e});
+      res.status(500).json("fail");
       //restart option
     }
   },

@@ -161,6 +161,7 @@ module.exports = {
           board_title: req.params.boardname,
           read_post: read_post,
           socketurl: basic_data.socket_url,
+          socketid:req.headers.sessionid
         })
       }
       else {
@@ -274,6 +275,8 @@ module.exports = {
       res.json("error!");
     };
   },
+
+
 
   //404 handling
   no_page: (req,res,next) =>{

@@ -1,11 +1,7 @@
 const SocketIO = require('socket.io');
 const read_db = require('../database/read_db');
+const redis = require('../database/redis');
 
-let get_session = async (cookie) => {
-  //to get session data from DB server
-  let session_id = cookie.split('session_id=s%3A')[1].split('.')[0];
-  return await read_db.get_session_data(session_id);
-};
 //realtime comment socket io section
 module.exports = (server) => {
   const io = SocketIO(server, {
@@ -17,8 +13,9 @@ module.exports = (server) => {
   });
   io.on('connection', async (socket) => {
     const req = socket.request;
-    let session = await get_session(req.headers.cookie);
-    let sedata = JSON.parse(session.session); //sessiondata
+    //let session = await get_session(req.headers.cookie);
+    let sedata = await redis.get_session_data(socket.handshake.query.session_id);  //get session data from redis
+    //let sedata = JSON.parse(session.session); //sessiondata
     const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
     console.log('new client connect', ip, socket.id, req.ip);
 
@@ -48,7 +45,6 @@ module.exports = (server) => {
         //no login data. don't emit another user
         return;
       }
-      var board = await db("board", "postSchema");
       console.log("socket.io coming\nevent name:",event,"\ndata name:",data);
       var evt = event.split('/');
       //check event

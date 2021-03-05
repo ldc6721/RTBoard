@@ -2,7 +2,7 @@ let new_cmt = (id,mine,nickname,text,date)=> {
   //append new_cmt
   var $input = document.createElement('li');
   $input.innerHTML =
-  `<div id="cmt_id_${id}"class="comment-block">
+  `<div id="${id}"class="comment-block">
     <div class="comment-nicknameBlock">
       <div class="comment-nicknameBox">
         <p>${nickname}</p>
@@ -45,12 +45,17 @@ var update_comment_count = ()=>{
 
 $(document).ready(() => {
   //comment websocket
-  const socket = io.connect('http://' + $('#socket_url').attr('url'), {
+  const socket = io.connect($('#socket_url').attr('url'), {
     path: '/socket.io',
+    query: {
+      "session_id":$('#socket_id').attr('seid'),
+    }
   });
+  console.log(document.cookie);
+
   var post_index = $(location).attr('pathname').split("/");
 
-  socket.on('cmt/'+post_index[2] + '/' + post_index[3] + '/write', (data) => {
+  socket.on('cmt/' + post_index[2] + '/' + post_index[3] + '/write', (data) => {
     //new comment coming!
     console.log(data);
     //set new comment

@@ -73,6 +73,38 @@ $(document).ready(()=>{
   //     width: autowidth
   //   },500);
   // });
+
+
+  //image upload button
+  $(".board-write-upadimagebutton").click(()=>{
+    //open file reader
+    $('#board-write-imageinput').trigger('click');
+  });
+  //image upload action
+  $("#board-write-imageinput").change(()=>{
+    //create formdata
+    let data = new FormData();
+    //attach image
+    data.append('image',$('#board-write-imageinput')[0].files[0]);
+
+    //send to server
+    $.ajax({
+      url:get_complete_url($(location).attr('href')) +'/temporary_image',
+      type:'POST',
+      contentType:'multipart/form-data',
+      data: data,
+      processData: false,
+      contentType: false,
+      success:function(data){
+        console.log("success")
+        alert(data);
+      },
+      error:(err)=>{
+        alert("fail");
+        console.log(err);
+      }
+    });
+  });
 });
 
 let check_write_post = (title,contents)=>{

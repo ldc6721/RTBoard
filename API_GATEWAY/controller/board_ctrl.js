@@ -23,7 +23,7 @@ module.exports = {
   },
   get_page: async(req,res,next)=>{
     try {
-      axios(setConfig(req.method,baseurl+req.path,req.body,req.headers,req.session))
+      axios(setConfig(req.method,baseurl+req.path,req.body,req.headers,req.session,req.sessionID))
       .then(response=>{
         res.send(response.data);
       });
@@ -34,7 +34,7 @@ module.exports = {
   },
   post_message: async(req,res,next)=>{
     try {
-      axios(setConfig(req.method,baseurl+req.path,req.body,req.headers,req.session))
+      axios(setConfig(req.method,baseurl+req.path,req.body,req.headers,req.session,req.sessionID))
       .then(response=>{
         res.json(response.data);
       });
@@ -43,21 +43,39 @@ module.exports = {
       res.status(500).send("post error");
     }
   },
-  connect_socket: async(req,res,next)=>{
+
+  upload_image_module: async(req,res,next)=>{
     try {
-      axios({
-        method:req.method,
-        url:baseurl+req._parsedUrl.path,
-        data:req.body,
-        headers:req.headers
-      }).then(response=>{
-        res.send(response.data);
+      var buffer = "";
+      req.on('data',(chunk)=>{
+        buffer += chunk.toString();
       });
+      req.on('end',()=>{
+        console.log('buffer:',buffer);
+      })
+      res.status(200).send('success');
     } catch (e) {
-      console.error('socket.io error',e);
-      res.status(500).send("socket.io error");
+      console.error(e);
+      res.status(500).send("post error");
     }
   },
+  // connect_socket: async(req,res,next)=>{
+  //   try {
+  //     axios({
+  //       method:req.method,
+  //       url:baseurl+req._parsedUrl.path,
+  //       data:req.body,
+  //       headers:req.headers
+  //     }).then(response=>{
+  //       res.send(response.data);
+  //     });
+  //   } catch (e) {
+  //     console.error('socket.io error',e);
+  //     res.status(500).send("socket.io error");
+  //   }
+  // },
+
+
   // main_page: async(req,res,next)=>{
   //   try {
   //     axios(setConfig(req.method,baseurl+req.path,req.body,req.headers,req.session))
