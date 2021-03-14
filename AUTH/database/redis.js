@@ -7,9 +7,6 @@ client.on("error",(error)=>{
   console.error(error);
 });
 
-//client.set("key","value",redis.print);
-//client.get("key",redis.print);
-
 module.exports = {
   set_login_data:(sessionID,id,uid,admin)=>{
     try {
@@ -36,3 +33,8 @@ module.exports = {
     }
   }
 }
+
+
+//setting test
+//client.set("key","value",redis.print);
+//client.get("key",redis.print);

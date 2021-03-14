@@ -18,7 +18,6 @@ app.use(session({
   store:new RedisStore({client:redis_client})
 }));
 
-
 //bodyParser
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -26,22 +25,11 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(cors());
 
-// app.use((req,res,next)=>{
-//   //console.log(req.session);
-//   next();
-// })
 //public
 app.use(express.static(path.join(__dirname,'../ejs/public')));
 
 //router
 app.use('/',router);
-
-
-//cors setting
-// app.get('/',cors(corsOptions),(req,res,next)=>{
-//   console.log("fail!");
-//   res.send("fail!");
-// });
 
 app.listen(port,()=>{
   console.log(`now api gateway is listeng on ${port}`);
